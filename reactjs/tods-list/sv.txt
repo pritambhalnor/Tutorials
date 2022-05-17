@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- April 2022   -->
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VekoCare</title>
+    <?php include 'php/globleCssLink.php'; ?>
+
+    <style>
+        .blog_title {
+            text-transform: capitalize;
+        }
+
+        li.pagination_list_item a {
+            cursor: pointer;
+        }
+
+        li.pagination_list_item.active a {
+            background-color: #108896 !important;
+        }
+
+        li.pagination_list_item a:hover {
+            background-color: #108896 !important;
+            transition: all ease 0.3s;
+        }
+
+        .img-blog.blog_img_wrapper {
+            display: flex;
+            justify-content: center;
+        }
+
+        .blog-post.row {
+            padding: 30px 20px !important;
+            box-shadow: 0 0 8px #FFEFD5;
+            border-radius: 5px;
+            margin: 3.5rem 0;
+            background-color: #fbfbfb;
+        }
+
+        h4.tags_heading {
+            position: relative;
+            top: 18px;
+            text-align: center;
+        }
+
+        .input-group.search_input {
+            margin: auto;
+            width: 50%;
+        }
+
+        @media screen and (max-width:768px) {
+            .input-group.search_input {
+                width: 90%
+            }
+        }
+
+        .input-group.search_input>input {
+            background-image: url("/fonts/icon/search-icon.png");
+            background-repeat: no-repeat;
+            background-position: 12px 12px;
+            border-radius: 5px !important;
+            padding: 0 4rem;
+
+        }
+
+        #blog-search-panel {
+            position: absolute !important;
+            top: 42px;
+            z-index: 4;
+            width: 100%;
+            background: #fff;
+            font-weight: bold;
+            color: #000;
+            overflow-y: auto;
+            max-height: 300px;
+            box-shadow: 0 0 1px #000;
+            border-radius: 4px;
+
+        }
+
+        #blog-search-panel .resetCss {
+            display: block;
+            padding: 1rem;
+        }
+
+        #blog-search-panel.display-none {
+            display: none !important;
+        }
+
+        #blog-search-panel ul li {
+            font-size: 14px;
+            list-style: none;
+            cursor: pointer;
+            padding-left: 1rem;
+        }
+
+        #blog-search-panel ul {
+            padding: 0;
+        }
+
+        #blog-search-panel ul li:hover {
+            background-color: #fbfbfb;
+        }
+
+        .img-responsive.blog-image {
+            max-height: 350px !important;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- header -->
+    <?php include 'php/header.php'; ?>
+
+    <section id="blog" class="pages">
+        <div class="jumbotron" data-stellar-background-ratio="0.5">
+            <!-- Heading -->
+            <div class="jumbo-heading" data-stellar-background-ratio="1.2">
+                <h1>Veko Blogs</h1>
+            </div>
+        </div>
+        <!-- container -->
+        <div class="container">
+            <div class="col-md-12">
+                <!-- Breadcrumb -->
+                <ul class="breadcrumb">
+                    <li><a href="index.php">Home</a> <span class="divider"></span></li>
+                    <li class="active">Veko Blogs</li>
+                </ul>
+                <div class="form-group">
+                    <div class="input-group search_input ">
+                        <input id="blog-search-input" type="text" class="form-control" placeholder="Search Blogs by Title">
+                        <div id="blog-search-panel" class="display-none">
+                            <ul id="blog-search-list"></ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- /col-md-12 -->
+                <!-- Blog Home -->
+
+
+                <div id="blog-container" class="col-md-12">
+
+                    <?php
+                    if ($_POST['tag-input']) {
+                        $blogPosts = getApi("/blogs/?_where[_or][0][tags_contains]=" . $_POST['tag-input'] . "&endDate_gt=" . date('Y-m-d'));
+                        echo "<h4 class='tags_heading'>Blogs containing tag '" . $_POST['tag-input'] . "'</h4>";
+                    } else {
+                        $page = $_POST['pagenumber-input'] ? $_POST['pagenumber-input'] : 1;
+                        $itemsInPage = 10;
+                        $startWith = ($page - 1) * 10;
+                        $totalItems = getApi('/blogs/count');
+                        $totalPages = ceil($totalItems / 10);
+                        $blogPosts = getApi("/blogs?_sort=published_at:desc&_start=" . $startWith . "&_limit=" . $itemsInPage . "&endDate_gt=" . date('Y-m-d'));
+                    }
+                    // $blogPosts = getApi("/blogs/_start=" . $);
+
+
+                    foreach ($blogPosts as $key => $post) {
+                        $blogUrl=$post->url;
+                        $published = new DateTime($post->published_at);
+                        if (isMobile()) {
+                            $imageUrl = str_replace("/uploads/", "/uploads/small_", $post->headerImage[0]->url);
+                        } else {
+                            $imageUrl = $post->headerImage[0]->url;
+                        }
+
+
+                        echo  '<div class="blog-post row">
+                    <form action="' . getCurrentDomain() . '/blog-single?url= method="post">
+                    <input type="hidden" name="id" value="' . $post->id . '" />
+                    <div class="img-date">
+                        
+                        <!-- blog image -->
+                        <div class="img-blog blog_img_wrapper">
+                        <button class="resetCss" type="submit" name="submit">
+                                <img class="img-responsive blog-image" src="' . $base_img_url . $imageUrl . '" alt="">
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <!-- Post header -->
+                        <h3 class="blog_title">
+                        ' . $post->title . '
+                        </h3>
+                        <div class="post-info">
+                            <!-- Post Author -->
+                            <p><i class="fa fa-user"></i>by <a>' . $post->authorName . '</a></p>
+                            <!-- Post published date -->
+                             <p><i class="fa fa fa-calendar"></i>posted on <a> ' . $published->format('d M Y') . '</a></p>
+                        </div>
+                        <!-- Post Excerpt -->
+                        <p>' . $post->shortDescription . '</p>
+                        
+                        <input class="btn" type="submit" name="submit" value="Read More" />
+                    </div>
+                    </form>
+                </div>';
+                    }
+
+                    ?>
+                </div>
+                <?php
+                echo ' <form action="' . getCurrentDomain() . '/blogs" id="pagination_form" method="post">'
+                ?>
+                <div class="text-center col-md-12">
+                    <ul class="pagination">
+                        <?php
+                        for ($i = 1; $i <= $totalPages; $i++) {
+                            // while iterating if i == current page then add active class
+                            $activeClass = $i == $page ?  "pagination_list_item active" : "pagination_list_item";
+                            echo '<li class="' . $activeClass . '"><a onclick="handlePageChange(event)"> ' . $i . '</a> </li>';
+                        }
+                        ?>
+                    </ul>
+                </div>
+                <!-- /text-center -->
+
+                </form>
+                <!-- /container-->
+    </section>
+    <!-- footer -->
+    <?php include 'php/footer.php'; ?>
+    <script>
+        // handle page change function
+        const handlePageChange = (e) => {
+            const paginationForm = document.getElementById("pagination_form");
+            const pageInput = document.createElement("input");
+            pageInput.setAttribute("name", "pagenumber-input");
+            pageInput.setAttribute("id", "pagenumber-input");
+            pageInput.setAttribute("type", "hidden");
+            pageInput.value = e.target.innerText;
+            paginationForm.appendChild(pageInput);
+            paginationForm.submit();
+        }
+
+        // handle blog search function
+        const blogSearchInp = document.getElementById("blog-search-input");
+        const blogsListElement = document.getElementById("blog-search-list");
+        const searchResultDiv = document.getElementById("blog-search-panel");
+        blogSearchInp.addEventListener("keyup", (e) => {
+            const searchVal = e.target.value;
+            if (searchVal.length <= 2) return searchResultDiv.classList.add("display-none");
+            searchResultDiv.classList.remove("display-none");
+            let blogListHtml = "";
+            const baseApiUrl = '<?php echo $base_api_url; ?>';
+
+            fetch(`${baseApiUrl}/blogs?title_contains=${searchVal}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data);
+                    if (data.length === 0) {
+                        blogsListElement.innerHTML = "<li>No blogs found.</li>"
+                    } else {
+                        data.forEach((blog) => {
+                            blogListHtml += `<li>
+                            <?php
+                            echo '<form action="' . getCurrentDomain() . '/blog-single" method="post">'
+                            ?>
+                            <input type="hidden" name="id" value="${blog.id}"> <input class="resetCss" type="submit" name="submit" value="${blog.title}">
+                            </form>
+                            </li>`;
+                        })
+                        blogsListElement.innerHTML = blogListHtml;
+                    }
+                })
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,5 @@
+https://web.dev/learn/
+
+npm install react-router-dom@5.2.0
+
+https://stackoverflow.com/questions/66141345/get-selected-item-and-its-count

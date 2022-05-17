@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Tic Tac Toe</title>
+</head>
+
+<body>
+    <div class="input">
+        <div>Player 1:(x) <input id="pm1" type="text" placeholder="Player 1 : Name" /></div>
+        <div>Player 2:(0) <input id="pm2" type="text" placeholder="player 2 : Name" /></div>
+    </div>
+    <div class="main">
+        <div class="imgbox2">
+            <P class="won"></P>
+            <video id="video" width="321vw" height="244vh" autoplay>
+        <source src="./spparrow.webm" type="video/webm">
+        <!-- <source src="../gif/spparrow.webm" type="video/mp4">
+        <source src="../gif/spparrow.webm" type="video/ogg"> -->
+        Your browser does not support the video tag.
+      </video>
+        </div>
+        <div class="container">
+            <div id="1" class="grid bt bl"><span class="bitem"></span></div>
+            <div id="2" class="grid bt"><span class="bitem"></span></div>
+            <div id="3" class="grid bt br"><span class="bitem"></span></div>
+            <div id="4" class="grid bl"><span class="bitem"></span></div>
+            <div id="5" class="grid"><span class="bitem"></span></div>
+            <div id="6" class="grid br"><span class="bitem"></span></div>
+            <div id="7" class="grid bb bl"><span class="bitem"></span></div>
+            <div id="8" class="grid bb "><span class="bitem"></span></div>
+            <div id="9" class="grid bb br"><span class="bitem"></span></div>
+
+        </div>
+        <div class="turn">Turn For :
+            <span class="turnfor"></span>
+            <div class="imgbox">
+                <img src="./excited.gif" alt="" srcset="" width="195vh">
+                <!-- <img src="spparrow.webm" alt="" srcset="" width="55vw"> -->
+
+            </div>
+        </div>
+    </div>
+    <div class="rbtn">
+        <button class="reset ">Reset</button>
+    </div>
+    <hr>
+    <div class="m2">
+        <div class="result">
+            <h2> SCORES . </h2>
+            <hr>
+            <div class="pl1">Player 1:
+                <hr>
+                <span class="p1"></span>
+            </div>
+            <hr>
+            <div class="pl2">Player 2:
+                <hr>
+                <span class="p2"></span>
+            </div>
+            <hr>
+        </div>
+    </div>
+    <hr>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
